@@ -24,7 +24,150 @@ public class Main {
         gameBoard = createGameBoard (gameBoardSize, water, destroyer, submarine, boat);
 
     }
+    public static void updateGameBoard (char[][] gameBoard, int gameBoardSize, char water, int[] destroyer, int[] submarine, int[] boat, char miss, char hit, char sunk, String estimatedCoordinate) {
+        char destroyerChar = (char) destroyer[0];
+        char submarineChar = (char) submarine[0];
+        char boatChar = (char) boat[0];
 
+        int rawForUpdate = checkCoordinateRaw(estimatedCoordinate);
+        int columnForUpdate = checkCoordinateColumn(estimatedCoordinate);
+        boolean isShipSunk = true;
+
+        if (gameBoard[rawForUpdate][columnForUpdate] == water) {
+            gameBoard[rawForUpdate][columnForUpdate] = miss;
+        }
+        else if (gameBoard[rawForUpdate][columnForUpdate] == destroyerChar || gameBoard[rawForUpdate][columnForUpdate] == submarineChar
+                || gameBoard[rawForUpdate][columnForUpdate] == boatChar){
+            gameBoard[rawForUpdate][columnForUpdate] = hit;
+
+            while (isShipSunk && rawForUpdate < gameBoardSize && gameBoard[rawForUpdate][columnForUpdate] != water && gameBoard[rawForUpdate][columnForUpdate] != miss) {
+                isShipSunk = gameBoard[rawForUpdate][columnForUpdate] != destroyerChar && gameBoard[rawForUpdate][columnForUpdate] != submarineChar;
+                System.out.println(1);
+                rawForUpdate++;
+            }
+
+            rawForUpdate = checkCoordinateRaw(estimatedCoordinate);
+            while (isShipSunk && rawForUpdate >= 0 && gameBoard[rawForUpdate][columnForUpdate] != water && gameBoard[rawForUpdate][columnForUpdate] != miss) {
+                isShipSunk = gameBoard[rawForUpdate][columnForUpdate] != destroyerChar && gameBoard[rawForUpdate][columnForUpdate] != submarineChar;
+                System.out.println(2);
+                rawForUpdate--;
+            }
+
+            rawForUpdate = checkCoordinateRaw(estimatedCoordinate);
+            while (isShipSunk && columnForUpdate < gameBoardSize && gameBoard[rawForUpdate][columnForUpdate] != water && gameBoard[rawForUpdate][columnForUpdate] != miss) {
+                isShipSunk = gameBoard[rawForUpdate][columnForUpdate] != destroyerChar && gameBoard[rawForUpdate][columnForUpdate] != submarineChar;
+                System.out.println(3);
+                columnForUpdate++;
+            }
+
+            columnForUpdate = checkCoordinateColumn(estimatedCoordinate);
+            while (isShipSunk && columnForUpdate >= 0 && gameBoard[rawForUpdate][columnForUpdate] != water && gameBoard[rawForUpdate][columnForUpdate] != miss) {
+                isShipSunk = gameBoard[rawForUpdate][columnForUpdate] != destroyerChar && gameBoard[rawForUpdate][columnForUpdate] != submarineChar;
+                System.out.println(4);
+                columnForUpdate--;
+            }
+
+            if (isShipSunk) {
+                rawForUpdate = checkCoordinateRaw(estimatedCoordinate);
+                columnForUpdate = checkCoordinateColumn(estimatedCoordinate);
+
+                gameBoard[rawForUpdate][columnForUpdate] = sunk;
+                System.out.println("A");
+                while (rawForUpdate < gameBoardSize && gameBoard[rawForUpdate][columnForUpdate] != water && gameBoard[rawForUpdate][columnForUpdate] != miss) {
+                    if (gameBoard[rawForUpdate][columnForUpdate] == hit) {
+                        gameBoard[rawForUpdate][columnForUpdate] = sunk;
+                    }
+                    rawForUpdate++;
+                    System.out.println("AA");
+                }
+                System.out.println("B");
+                rawForUpdate = checkCoordinateRaw(estimatedCoordinate);
+                while (rawForUpdate >= 0 && gameBoard[rawForUpdate][columnForUpdate] != water && gameBoard[rawForUpdate][columnForUpdate] != miss) {
+                    if (gameBoard[rawForUpdate][columnForUpdate] == hit) {
+                        gameBoard[rawForUpdate][columnForUpdate] = sunk;
+                    }
+                    rawForUpdate--;
+                    System.out.println("BB");
+                }
+                System.out.println("C");
+                rawForUpdate = checkCoordinateRaw(estimatedCoordinate);
+                columnForUpdate = checkCoordinateColumn(estimatedCoordinate);
+                while (columnForUpdate < gameBoardSize && gameBoard[rawForUpdate][columnForUpdate] != water && gameBoard[rawForUpdate][columnForUpdate] != miss) {
+                    if (gameBoard[rawForUpdate][columnForUpdate] == hit) {
+                        gameBoard[rawForUpdate][columnForUpdate] = sunk;
+                    }
+                    columnForUpdate++;
+                    System.out.println("CC");
+                }
+                System.out.println("D");
+                columnForUpdate = checkCoordinateColumn(estimatedCoordinate);
+                while (columnForUpdate >= 0 && gameBoard[rawForUpdate][columnForUpdate] != water && gameBoard[rawForUpdate][columnForUpdate] != miss) {
+                    if (gameBoard[rawForUpdate][columnForUpdate] == hit) {
+                        gameBoard[rawForUpdate][columnForUpdate] = sunk;
+                    }
+                    columnForUpdate--;
+                    System.out.println("DD");
+                }
+            }
+        }
+    }
+
+    public static int checkCoordinateRaw(String estimatedCoordinate) {
+        int firstRawInChar = 49;
+        int raw = 0;
+        int estimatedRawNumber = (int) estimatedCoordinate.charAt(1);
+
+        if (estimatedRawNumber > 48 && estimatedRawNumber < 58) {
+            while (firstRawInChar != estimatedRawNumber) {
+                raw++;
+                firstRawInChar++;
+            }
+        } else {
+            estimatedRawNumber = estimatedCoordinate.charAt(0);
+
+            while (firstRawInChar != estimatedRawNumber) {
+                raw++;
+                firstRawInChar++;
+            }
+        }
+        return raw;
+    }
+    public static int checkCoordinateColumn(String estimatedCoordinate) {
+        int firstColumn = 65;
+        int column = 0;
+        int estimatedColumnNumber = estimatedCoordinate.charAt(0);
+
+        if (estimatedColumnNumber > 64 && estimatedColumnNumber < 74) {
+            while (firstColumn != estimatedColumnNumber) {
+                column++;
+                firstColumn++;
+            }
+        } else {
+            estimatedColumnNumber = estimatedCoordinate.charAt(1);
+
+            while (firstColumn != estimatedColumnNumber) {
+                column++;
+                firstColumn++;
+            }
+        }
+        return column;
+    }
+    public static void showMessage(char[][] gameBoard, char water, int boat[], char miss, char sunk, char hit, String estimatedCoordinate){
+        if (gameBoard[checkCoordinateRaw(estimatedCoordinate)][checkCoordinateColumn(estimatedCoordinate)] == water)
+        {
+            System.out.println("You missed. Try again!");
+        } else if (gameBoard[checkCoordinateRaw(estimatedCoordinate)][checkCoordinateColumn(estimatedCoordinate)] == (char) boat[0]) {
+            System.out.println("You sank the boat. Congratulation!");
+        } else if (gameBoard[checkCoordinateRaw(estimatedCoordinate)][checkCoordinateColumn(estimatedCoordinate)] == hit) {
+            System.out.println("You already hit this ship.");
+        } else if (gameBoard[checkCoordinateRaw(estimatedCoordinate)][checkCoordinateColumn(estimatedCoordinate)] == sunk) {
+            System.out.println("This ship already sunk.");
+        } else if (gameBoard[checkCoordinateRaw(estimatedCoordinate)][checkCoordinateColumn(estimatedCoordinate)] == miss) {
+            System.out.println("You already chose this coordinate.");
+        } else {
+            System.out.println("You hit the ship!");
+        }
+    }
     public static char[][] createGameBoard(int gameBoardSize, char water, int[] destroyer, int[] submarine, int[] boat) {
         char[][] gameBoard = new char[gameBoardSize][gameBoardSize];
 
@@ -38,10 +181,12 @@ public class Main {
 
         return gameBoard;
     }
+
     public static boolean chooseShipDirection() {
         Random random = new Random();
         return random.nextBoolean();
     }
+
     public static void placeDestroyer(char[][] gameBoard, int gameBoardSize, int[] destroyer){
         Random random = new Random();
         int placedDestroyerNumber = 0;
