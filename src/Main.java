@@ -1,5 +1,6 @@
 import java.util.Arrays;
 import java.util.Random;
+import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
@@ -22,7 +23,42 @@ public class Main {
         char sunk = '*';
 
         gameBoard = createGameBoard (gameBoardSize, water, destroyer, submarine, boat);
+    }
 
+    public static void showGameBoard (char[][] gameBoard, char water, int[] destroyer, int[] submarine, int[] boat) {
+        int rawNumber = 1;
+        char columnNumber = 'A';
+
+        System.out.print("  ");
+        for (int i = 0; i <  gameBoard.length; i++)
+        {
+            System.out.print(columnNumber++ + " ");
+        }
+        System.out.println();
+
+        for (char[] row: gameBoard) {
+            System.out.print(rawNumber++ + " ");
+            for (char column: row) {
+
+                if (column == (char)destroyer[0] || column == (char)submarine[0] || column == (char)boat[0])
+                {
+                    System.out.print(water + " ");
+                } else {
+                    System.out.print(column + " ");
+                }
+            }
+            System.out.println();
+        }
+        System.out.println();
+    }
+    public static void showAllGameBoard (char[][] gameBoard) {
+        for (char[] row: gameBoard) {
+            for (char column: row) {
+                System.out.print(column + " ");
+            }
+            System.out.println();
+        }
+        System.out.println();
     }
     public static void updateGameBoard (char[][] gameBoard, int gameBoardSize, char water, int[] destroyer, int[] submarine, int[] boat, char miss, char hit, char sunk, String estimatedCoordinate) {
         char destroyerChar = (char) destroyer[0];
