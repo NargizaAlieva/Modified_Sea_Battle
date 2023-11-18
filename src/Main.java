@@ -52,6 +52,8 @@ public class Main {
         System.out.println();
     }
     public static void showAllGameBoard (char[][] gameBoard) {
+        clearScreen();
+
         for (char[] row: gameBoard) {
             for (char column: row) {
                 System.out.print(column + " ");
@@ -59,6 +61,10 @@ public class Main {
             System.out.println();
         }
         System.out.println();
+    }
+    public static void clearScreen() {
+        System.out.print("\033[H\033[2J");
+        System.out.flush();
     }
     public static void updateGameBoard (char[][] gameBoard, int gameBoardSize, char water, int[] destroyer, int[] submarine, int[] boat, char miss, char hit, char sunk, String estimatedCoordinate) {
         char destroyerChar = (char) destroyer[0];
