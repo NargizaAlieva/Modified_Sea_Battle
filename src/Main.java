@@ -24,6 +24,26 @@ public class Main {
 
         gameBoard = createGameBoard (gameBoardSize, water, destroyer, submarine, boat);
 
+        playOnePlayerMode (gameBoard, gameBoardSize, water, destroyer, submarine, boat, miss, hit, sunk, destroyerNumber, submarineNumber, boatNumber);
+
+    }
+
+    public static void playOnePlayerMode (char[][] gameBoard, int gameBoardSize, char water, int[] destroyer, int[] submarine, int[] boat, char miss, char hit, char sunk, int destroyerNumber, int submarineNumber, int boatNumber) {
+        Scanner scanner = new Scanner(System.in);
+
+        while (checkIsThereAnyShip (gameBoard, destroyerNumber, submarineNumber, boatNumber, hit, sunk))
+        {
+            //showAllGameBoard(gameBoard);
+            showGameBoard(gameBoard, water, destroyer, submarine, boat);
+
+            System.out.print("Enter the coordinate: ");
+            String estimatedCoordinate = scanner.nextLine();
+            clearScreen();
+
+            showMessage(gameBoard, water, boat,  miss, sunk, hit, estimatedCoordinate);
+            updateGameBoard(gameBoard, gameBoardSize, water, destroyer, submarine, boat, miss, hit, sunk, estimatedCoordinate);
+        }
+
     }
 
     public static boolean checkIsThereAnyShip (char[][] gameBoard, int destroyerNumber, int submarineNumber, int boatNumber, char hit, char sunk) {
@@ -43,6 +63,7 @@ public class Main {
             return true;
         }
     }
+
     public static void showGameBoard (char[][] gameBoard, char water, int[] destroyer, int[] submarine, int[] boat) {
         int rawNumber = 1;
         char columnNumber = 'A';
