@@ -31,6 +31,9 @@ public class Main {
     public static void playOnePlayerMode (char[][] gameBoard, int gameBoardSize, char water, int[] destroyer, int[] submarine, int[] boat, char miss, char hit, char sunk, int destroyerNumber, int submarineNumber, int boatNumber) {
         Scanner scanner = new Scanner(System.in);
 
+        System.out.print("Enter your name: ");
+        String playerName = scanner.nextLine();
+
         while (checkIsThereAnyShip (gameBoard, destroyerNumber, submarineNumber, boatNumber, hit, sunk))
         {
             //showAllGameBoard(gameBoard);
@@ -57,11 +60,7 @@ public class Main {
             }
         }
 
-        if (hitNumber == hitShipNumber) {
-            return false;
-        } else {
-            return true;
-        }
+        return hitNumber != hitShipNumber;
     }
 
     public static void showGameBoard (char[][] gameBoard, char water, int[] destroyer, int[] submarine, int[] boat) {
@@ -196,7 +195,7 @@ public class Main {
     public static int checkCoordinateRaw(String estimatedCoordinate) {
         int firstRawInChar = 49;
         int raw = 0;
-        int estimatedRawNumber = (int) estimatedCoordinate.charAt(1);
+        int estimatedRawNumber = estimatedCoordinate.charAt(1);
 
         if (estimatedRawNumber > 48 && estimatedRawNumber < 58) {
             while (firstRawInChar != estimatedRawNumber) {
@@ -233,7 +232,7 @@ public class Main {
         }
         return column;
     }
-    public static void showMessage(char[][] gameBoard, char water, int boat[], char miss, char sunk, char hit, String estimatedCoordinate){
+    public static void showMessage(char[][] gameBoard, char water, int[] boat, char miss, char sunk, char hit, String estimatedCoordinate){
         if (gameBoard[checkCoordinateRaw(estimatedCoordinate)][checkCoordinateColumn(estimatedCoordinate)] == water)
         {
             System.out.println("You missed. Try again!");
