@@ -23,8 +23,26 @@ public class Main {
         char sunk = '*';
 
         gameBoard = createGameBoard (gameBoardSize, water, destroyer, submarine, boat);
+
     }
 
+    public static boolean checkIsThereAnyShip (char[][] gameBoard, int destroyerNumber, int submarineNumber, int boatNumber, char hit, char sunk) {
+        int hitNumber = destroyerNumber * 3 + submarineNumber * 2 + boatNumber;
+        int hitShipNumber = 0;
+
+        for (char[] row: gameBoard) {
+            for (char column: row) {
+                if (column == hit || column == sunk)
+                    hitShipNumber++;
+            }
+        }
+
+        if (hitNumber == hitShipNumber) {
+            return false;
+        } else {
+            return true;
+        }
+    }
     public static void showGameBoard (char[][] gameBoard, char water, int[] destroyer, int[] submarine, int[] boat) {
         int rawNumber = 1;
         char columnNumber = 'A';
