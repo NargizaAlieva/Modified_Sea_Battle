@@ -30,6 +30,9 @@ public class Main {
 
     public static void playOnePlayerMode (char[][] gameBoard, int gameBoardSize, char water, int[] destroyer, int[] submarine, int[] boat, char miss, char hit, char sunk, int destroyerNumber, int submarineNumber, int boatNumber) {
         Scanner scanner = new Scanner(System.in);
+        int shotNumber = 0;
+        int missNumber = 0;
+        int hitNumber = 0;
 
         System.out.print("Enter your name: ");
         String playerName = scanner.nextLine();
@@ -47,6 +50,25 @@ public class Main {
             updateGameBoard(gameBoard, gameBoardSize, water, destroyer, submarine, boat, miss, hit, sunk, estimatedCoordinate);
         }
 
+        clearScreen();
+        System.out.println("Congratulations, " + playerName + "! You win!");
+        System.out.println(countHitNumber (gameBoard, miss, hit, sunk, shotNumber, missNumber, hitNumber));
+    }
+    public static String countHitNumber (char[][] gameBoard, char miss, char hit, char sunk, int shotNumber, int missNumber, int hitNumber) {
+        for (char[] row: gameBoard) {
+            for (char column: row) {
+                if (column == miss) {
+                    missNumber++;
+                    shotNumber++;
+                }
+                else if (column == sunk || column == hit) {
+                    hitNumber++;
+                    shotNumber++;
+                }
+            }
+        }
+
+        return "Number of shots: " + shotNumber + "\nMiss shots number: " + missNumber + "\nHit shots number: " + hitNumber;
     }
 
     public static boolean checkIsThereAnyShip (char[][] gameBoard, int destroyerNumber, int submarineNumber, int boatNumber, char hit, char sunk) {
