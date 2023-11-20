@@ -17,7 +17,33 @@ public class Main {
         char hit  = 'X';
         char sunk = '*';
 
-        playWithComputerMode(gameBoardSize, water, destroyer, submarine, boat, miss, hit, sunk);
+        while (true) {
+            System.out.print("Modes:\n 1. playOnePlayerMode\n 2. playTwoPlayersMode\n 3. playWithComputerMode\nChoose mode: ");
+            int mode = scanner.nextInt();
+            clearScreen();
+
+            if (mode == 1) {
+                playOnePlayerMode(gameBoardSize, water, destroyer, submarine, boat, miss, hit, sunk);
+            } else if (mode == 2) {
+                playTwoPlayersMode(gameBoardSize, water, destroyer, submarine, boat, miss, hit, sunk);
+            } else if (mode == 3) {
+                playWithComputerMode(gameBoardSize, water, destroyer, submarine, boat, miss, hit, sunk);
+            } else {
+                System.out.println("Please choose one of modes above");
+            }
+
+            System.out.println("\nDo you want to play again?");
+            System.out.print("Choose 'yes' or 'no': ");
+            String playAgainAnswer = scanner.nextLine();
+            playAgainAnswer = scanner.nextLine();
+
+            if (playAgainAnswer.equals("no") || playAgainAnswer.equals("No")) {
+                clearScreen();
+                System.out.println("Good Bye!");
+                System.exit(0);
+            }
+            clearScreen();
+        }
     }
 
     public static void playOnePlayerMode (int gameBoardSize, char water, int[] destroyer, int[] submarine, int[] boat, char miss, char hit, char sunk) {
@@ -439,6 +465,22 @@ public class Main {
             }
         }
         return column;
+    }
+    public static void showMessage(char[][] gameBoard, char water, int[] boat, char miss, char sunk, char hit, String estimatedCoordinate){
+        if (gameBoard[checkCoordinateRaw(estimatedCoordinate)][checkCoordinateColumn(estimatedCoordinate)] == water)
+        {
+            System.out.println("You missed. Try again!");
+        } else if (gameBoard[checkCoordinateRaw(estimatedCoordinate)][checkCoordinateColumn(estimatedCoordinate)] == (char) boat[0]) {
+            System.out.println("You sank the boat. Congratulation!");
+        } else if (gameBoard[checkCoordinateRaw(estimatedCoordinate)][checkCoordinateColumn(estimatedCoordinate)] == hit) {
+            System.out.println("You already hit this ship.");
+        } else if (gameBoard[checkCoordinateRaw(estimatedCoordinate)][checkCoordinateColumn(estimatedCoordinate)] == sunk) {
+            System.out.println("This ship already sunk.");
+        } else if (gameBoard[checkCoordinateRaw(estimatedCoordinate)][checkCoordinateColumn(estimatedCoordinate)] == miss) {
+            System.out.println("You already chose this coordinate.");
+        } else {
+            System.out.println("You hit the ship!");
+        }
     }
     public static char[][] createGameBoard(int gameBoardSize, char water, int[] destroyer, int[] submarine, int[] boat) {
         char[][] gameBoard = new char[gameBoardSize][gameBoardSize];
