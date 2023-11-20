@@ -17,7 +17,7 @@ public class Main {
         char hit  = 'X';
         char sunk = '*';
 
-        playTwoPlayersMode(gameBoardSize, water, destroyer, submarine, boat, miss, hit, sunk);
+        playWithComputerMode(gameBoardSize, water, destroyer, submarine, boat, miss, hit, sunk);
     }
 
     public static void playOnePlayerMode (int gameBoardSize, char water, int[] destroyer, int[] submarine, int[] boat, char miss, char hit, char sunk) {
@@ -135,6 +135,113 @@ public class Main {
                 System.out.println(countHitNumber(secondPlayerGameBoard, miss, hit, sunk, secondPlayerShotNumber, secondPlayerMissNumber, secondPlayerHitNumber));
             }
         }
+    }
+    public static void playWithComputerMode (int gameBoardSize, char water, int[] destroyer, int[] submarine, int[] boat, char miss, char hit, char sunk) {
+        Scanner scanner = new Scanner(System.in);
+        char[][] playerGameBoard = createGameBoard (gameBoardSize, water, destroyer, submarine, boat);
+        char[][] computerGameBoard = createGameBoard (gameBoardSize, water, destroyer, submarine, boat);
+
+        int playerShotNumber = 0;
+        int playerMissNumber = 0;
+        int playerHitNumber = 0;
+
+        int computerShotNumber = 0;
+        int computerMissNumber = 0;
+        int computerHitNumber = 0;
+
+        String playerEstimatedCoordinate = "";
+        String computerEstimatedCoordinate = "";
+        String messageForPlayer = "";
+        String messageForComputer = "";
+        boolean playerIsThereShip = true;
+        boolean computerIsThereShip = true;
+
+        int loopRepeatNumber = 1;
+
+        System.out.print("Enter your name: ");
+        String playerName = scanner.nextLine();
+
+        clearScreen();
+
+        while (playerIsThereShip && computerIsThereShip) {
+            //Computer
+            System.out.println("\nComputer turn\n");
+            if (loopRepeatNumber != 1) {
+                System.out.println(messageForComputer);
+            }
+            showAllGameBoard(computerGameBoard);
+            //showGameBoard(gameBoard, water, destroyer, submarine, boat);
+
+            System.out.print("Enter the coordinate: ");
+            computerEstimatedCoordinate = chooseComputer(gameBoardSize);
+
+            messageForComputer = updateGameBoard(computerGameBoard, gameBoardSize, water, destroyer, submarine, boat, miss, hit, sunk, computerEstimatedCoordinate);
+            computerIsThereShip = checkIsThereAnyShip(computerGameBoard, destroyer, submarine, boat, hit, sunk);
+
+
+            //Player
+            System.out.println("\n\n" + playerName + " your turn\n");
+            if (loopRepeatNumber != 1) {
+                System.out.println(messageForPlayer);
+            }
+            showAllGameBoard(playerGameBoard);
+            //showGameBoard(gameBoard, water, destroyer, submarine, boat);
+
+            System.out.print("Enter the coordinate: ");
+            playerEstimatedCoordinate = scanner.nextLine();
+
+            messageForPlayer = updateGameBoard(playerGameBoard, gameBoardSize, water, destroyer, submarine, boat, miss, hit, sunk, playerEstimatedCoordinate);
+            playerIsThereShip = checkIsThereAnyShip(playerGameBoard, destroyer, submarine, boat, hit, sunk);
+
+            clearScreen();
+            loopRepeatNumber++;
+        }
+
+        if (playerIsThereShip == computerIsThereShip) {
+            System.out.println("Draw!");
+            System.out.println("\n" + playerName + " player score:");
+            System.out.println(countHitNumber(playerGameBoard, miss, hit, sunk, playerShotNumber, playerMissNumber, playerHitNumber));
+
+            System.out.println("\nComputer score:");
+            System.out.println(countHitNumber(computerGameBoard, miss, hit, sunk, computerShotNumber, computerMissNumber, computerHitNumber));
+        } else {
+            if (checkIsThereAnyShip(playerGameBoard, destroyer, submarine, boat, hit, sunk)) {
+                System.out.println("Computer win!");
+                System.out.println("\nComputer score:");
+                System.out.println(countHitNumber(computerGameBoard, miss, hit, sunk, computerShotNumber, computerMissNumber, computerHitNumber));
+
+                System.out.println("\n" + playerName + " player score:");
+                System.out.println(countHitNumber(playerGameBoard, miss, hit, sunk, playerShotNumber, playerMissNumber, playerHitNumber));
+            } else {
+                System.out.println("Congratulations, " + playerName + "! You win!");
+                System.out.println("\n" + playerName + " player score:");
+                System.out.println(countHitNumber(playerGameBoard, miss, hit, sunk, playerShotNumber, playerMissNumber, playerHitNumber));
+
+                System.out.println("\nComputer player score:");
+                System.out.println(countHitNumber(computerGameBoard, miss, hit, sunk, computerShotNumber, computerMissNumber, computerHitNumber));
+            }
+        }
+    }
+    public static String chooseComputer(int gameBoardSize) {
+        Random random = new Random();
+        char[] computerArrayRaw = new char[gameBoardSize];
+        char[] computerArrayColumn = new char[gameBoardSize];
+
+        char raw = 'A';
+        for (int j = 0; j < gameBoardSize; j++)
+        {
+            computerArrayRaw[j] = raw;
+            raw++;
+        }
+
+        char column = '1';
+        for (int i = 0; i < gameBoardSize; i++) {
+            computerArrayColumn[i] = column;
+            column++;
+        }
+        String coordinate = computerArrayRaw[random.nextInt(gameBoardSize)] + "" + computerArrayColumn[random.nextInt(gameBoardSize)];
+        System.out.println(coordinate);
+        return coordinate;
     }
     public static String countHitNumber (char[][] gameBoard, char miss, char hit, char sunk, int shotNumber, int missNumber, int hitNumber) {
         for (char[] row: gameBoard) {
@@ -332,22 +439,6 @@ public class Main {
             }
         }
         return column;
-    }
-    public static void showMessage(char[][] gameBoard, char water, int[] boat, char miss, char sunk, char hit, String estimatedCoordinate){
-        if (gameBoard[checkCoordinateRaw(estimatedCoordinate)][checkCoordinateColumn(estimatedCoordinate)] == water)
-        {
-            System.out.println("You missed. Try again!");
-        } else if (gameBoard[checkCoordinateRaw(estimatedCoordinate)][checkCoordinateColumn(estimatedCoordinate)] == (char) boat[0]) {
-            System.out.println("You sank the boat. Congratulation!");
-        } else if (gameBoard[checkCoordinateRaw(estimatedCoordinate)][checkCoordinateColumn(estimatedCoordinate)] == hit) {
-            System.out.println("You already hit this ship.");
-        } else if (gameBoard[checkCoordinateRaw(estimatedCoordinate)][checkCoordinateColumn(estimatedCoordinate)] == sunk) {
-            System.out.println("This ship already sunk.");
-        } else if (gameBoard[checkCoordinateRaw(estimatedCoordinate)][checkCoordinateColumn(estimatedCoordinate)] == miss) {
-            System.out.println("You already chose this coordinate.");
-        } else {
-            System.out.println("You hit the ship!");
-        }
     }
     public static char[][] createGameBoard(int gameBoardSize, char water, int[] destroyer, int[] submarine, int[] boat) {
         char[][] gameBoard = new char[gameBoardSize][gameBoardSize];
