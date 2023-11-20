@@ -17,9 +17,8 @@ public class Main {
         char hit  = 'X';
         char sunk = '*';
 
-        playTwoPlayersMode (gameBoardSize,  water, destroyer, submarine, boat, miss, hit, sunk);
+        playTwoPlayersMode(gameBoardSize, water, destroyer, submarine, boat, miss, hit, sunk);
     }
-
 
     public static void playOnePlayerMode (int gameBoardSize, char water, int[] destroyer, int[] submarine, int[] boat, char miss, char hit, char sunk) {
         Scanner scanner = new Scanner(System.in);
@@ -51,6 +50,14 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
         char[][] firstPlayerGameBoard = createGameBoard (gameBoardSize, water, destroyer, submarine, boat);
         char[][] secondPlayerGameBoard = createGameBoard (gameBoardSize, water, destroyer, submarine, boat);
+
+        int firstPlayerShotNumber = 0;
+        int firstPlayerMissNumber = 0;
+        int firstPlayerHitNumber = 0;
+
+        int secondPlayerShotNumber = 0;
+        int secondPlayerMissNumber = 0;
+        int secondPlayerHitNumber = 0;
 
         String firstPlayerEstimatedCoordinate = "";
         String secondPlayerEstimatedCoordinate = "";
@@ -104,8 +111,31 @@ public class Main {
             loopRepeatNumber++;
         }
 
-    }
+        if (firstPlayerIsThereShip == secondPlayerIsThereShip) {
+            System.out.println("Draw!");
+            System.out.println("\n" + firstPlayerName + " player score:");
+            System.out.println(countHitNumber(firstPlayerGameBoard, miss, hit, sunk, firstPlayerShotNumber, firstPlayerMissNumber, firstPlayerHitNumber));
 
+            System.out.println("\n" + secondPlayerName + " player score:");
+            System.out.println(countHitNumber(secondPlayerGameBoard, miss, hit, sunk, secondPlayerShotNumber, secondPlayerMissNumber, secondPlayerHitNumber));
+        } else {
+            if (checkIsThereAnyShip(firstPlayerGameBoard, destroyer, submarine, boat, hit, sunk)) {
+                System.out.println("Congratulations, " + secondPlayerName + "! You win!");
+                System.out.println("\n" + secondPlayerName + " player score:");
+                System.out.println(countHitNumber(secondPlayerGameBoard, miss, hit, sunk, secondPlayerShotNumber, secondPlayerMissNumber, secondPlayerHitNumber));
+
+                System.out.println("\n" + firstPlayerName + " player score:");
+                System.out.println(countHitNumber(firstPlayerGameBoard, miss, hit, sunk, firstPlayerShotNumber, firstPlayerMissNumber, firstPlayerHitNumber));
+            } else {
+                System.out.println("Congratulations, " + firstPlayerName + "! You win!");
+                System.out.println("\n" + firstPlayerName + " player score:");
+                System.out.println(countHitNumber(firstPlayerGameBoard, miss, hit, sunk, firstPlayerShotNumber, firstPlayerMissNumber, firstPlayerHitNumber));
+
+                System.out.println("\n" + secondPlayerName + " player score:");
+                System.out.println(countHitNumber(secondPlayerGameBoard, miss, hit, sunk, secondPlayerShotNumber, secondPlayerMissNumber, secondPlayerHitNumber));
+            }
+        }
+    }
     public static String countHitNumber (char[][] gameBoard, char miss, char hit, char sunk, int shotNumber, int missNumber, int hitNumber) {
         for (char[] row: gameBoard) {
             for (char column: row) {
@@ -122,7 +152,6 @@ public class Main {
 
         return "Number of shots: " + shotNumber + "\nMiss shots number: " + missNumber + "\nHit shots number: " + hitNumber;
     }
-
     public static boolean checkIsThereAnyShip (char[][] gameBoard, int[] destroyer, int[] submarine, int[] boat, char hit, char sunk) {
         int hitNumber = destroyer[2] * 3 + submarine[2] * 2 + boat[2];
         int hitShipNumber = 0;
@@ -136,7 +165,6 @@ public class Main {
 
         return hitNumber != hitShipNumber;
     }
-
     public static void showGameBoard (char[][] gameBoard, char water, int[] destroyer, int[] submarine, int[] boat) {
         int rawNumber = 1;
         char columnNumber = 'A';
@@ -265,7 +293,6 @@ public class Main {
         }
         return messageForPlayer;
     }
-
     public static int checkCoordinateRaw(String estimatedCoordinate) {
         int firstRawInChar = 49;
         int raw = 0;
@@ -306,6 +333,22 @@ public class Main {
         }
         return column;
     }
+    public static void showMessage(char[][] gameBoard, char water, int[] boat, char miss, char sunk, char hit, String estimatedCoordinate){
+        if (gameBoard[checkCoordinateRaw(estimatedCoordinate)][checkCoordinateColumn(estimatedCoordinate)] == water)
+        {
+            System.out.println("You missed. Try again!");
+        } else if (gameBoard[checkCoordinateRaw(estimatedCoordinate)][checkCoordinateColumn(estimatedCoordinate)] == (char) boat[0]) {
+            System.out.println("You sank the boat. Congratulation!");
+        } else if (gameBoard[checkCoordinateRaw(estimatedCoordinate)][checkCoordinateColumn(estimatedCoordinate)] == hit) {
+            System.out.println("You already hit this ship.");
+        } else if (gameBoard[checkCoordinateRaw(estimatedCoordinate)][checkCoordinateColumn(estimatedCoordinate)] == sunk) {
+            System.out.println("This ship already sunk.");
+        } else if (gameBoard[checkCoordinateRaw(estimatedCoordinate)][checkCoordinateColumn(estimatedCoordinate)] == miss) {
+            System.out.println("You already chose this coordinate.");
+        } else {
+            System.out.println("You hit the ship!");
+        }
+    }
     public static char[][] createGameBoard(int gameBoardSize, char water, int[] destroyer, int[] submarine, int[] boat) {
         char[][] gameBoard = new char[gameBoardSize][gameBoardSize];
 
@@ -319,12 +362,10 @@ public class Main {
 
         return gameBoard;
     }
-
     public static boolean chooseShipDirection() {
         Random random = new Random();
         return random.nextBoolean();
     }
-
     public static void placeDestroyer(char[][] gameBoard, int gameBoardSize, int[] destroyer){
         Random random = new Random();
         int placedDestroyerNumber = 0;
@@ -348,8 +389,7 @@ public class Main {
             }
         }
     }
-    public static void placeSubmarine (char[][] gameBoard, int gameBoardSize, int[] submarine, char water)
-    {
+    public static void placeSubmarine (char[][] gameBoard, int gameBoardSize, int[] submarine, char water) {
         Random random = new Random();
         int placedSubmarineNumber = 0;
         boolean canPlaceShip = true;
@@ -502,175 +542,6 @@ public class Main {
             canPlaceShip = true;
         }
     }
-    /*
-    public static void placeShip (char[][] gameBoard, int gameBoardSize, int ship[], char water)
-    {
-        Random random = new Random();
-        int placedShipNumber = 0;
-        boolean canPlaceShip = true;
-
-        while (placedShipNumber != ship[2]) {
-            if (chooseShipDirection()) {
-                int randomRawNumber = random.nextInt(gameBoardSize - 1);
-                int randomColumnNumber = random.nextInt(gameBoardSize);
-
-                if (randomRawNumber == 0) {
-                    for (int j = 0; j <= ship[1]; j++) {
-                        if (randomColumnNumber == 0) {
-                            for (int i = 0; i < 2; i++) {
-                                if (gameBoard[randomRawNumber + j][randomColumnNumber + i] != water)
-                                    canPlaceShip = false;
-                            }
-                        } else if (randomColumnNumber + 1 == gameBoardSize) {
-                            for (int i = -1; i < 1; i++) {
-                                if (gameBoard[randomRawNumber + j][randomColumnNumber + i] != water)
-                                    canPlaceShip = false;
-                            }
-                        } else if (randomColumnNumber + 1 < gameBoardSize) {
-                            for (int i = -1; i < 2; i++) {
-                                if (gameBoard[randomRawNumber + j][randomColumnNumber + i] != water)
-                                    canPlaceShip = false;
-                            }
-                        } else {
-                            canPlaceShip = false;
-                        }
-                    }
-                } else if (randomColumnNumber + ship[1] == gameBoardSize) {
-                    for (int j = -1; j <= ship[1]; j++) {
-                        if (randomColumnNumber == 0) {
-                            for (int i = 0; i < 2; i++) {
-                                if (gameBoard[randomRawNumber + j][randomColumnNumber + i] != water)
-                                    canPlaceShip = false;
-                            }
-                        } else if (randomColumnNumber + 1 == gameBoardSize) {
-                            for (int i = -1; i < 1; i++) {
-                                if (gameBoard[randomRawNumber + j][randomColumnNumber + i] != water)
-                                    canPlaceShip = false;
-                            }
-                        } else if (randomColumnNumber + 1 < gameBoardSize){
-                            for (int i = -1; i < 2; i++) {
-                                if (gameBoard[randomRawNumber + j][randomColumnNumber + i] != water)
-                                    canPlaceShip = false;
-                            }
-                        } else {
-                            canPlaceShip = false;
-                        }
-                    }
-                } else if (randomRawNumber + ship[1] < gameBoardSize) {
-                    for (int j = -1; j <= ship[1]; j++) {
-                        if (randomColumnNumber == 0) {
-                            for (int i = 0; i < 2; i++) {
-                                if (gameBoard[randomRawNumber + j][randomColumnNumber + i] != water)
-                                    canPlaceShip = false;
-                            }
-                        } else if (randomColumnNumber + 1 == gameBoardSize) {
-                            for (int i = -1; i < 1; i++) {
-                                if (gameBoard[randomRawNumber + j][randomColumnNumber + i] != water)
-                                    canPlaceShip = false;
-                            }
-                        } else if (randomColumnNumber + 1 < gameBoardSize) {
-                            for (int i = -1; i < 2; i++) {
-                                if (gameBoard[randomRawNumber + j][randomColumnNumber + i] != water)
-                                    canPlaceShip = false;
-                            }
-                        } else {
-                            canPlaceShip = false;
-                        }
-                    }
-                } else {
-                    canPlaceShip = false;
-                }
-
-                if (canPlaceShip) {
-                    for (int j = 0; j < ship[1]; j++) {
-                        gameBoard[randomRawNumber + j][randomColumnNumber] = (char) ship[0];
-                    }
-                    placedShipNumber++;
-                }
-
-            } else {
-                int randomRawNumber = random.nextInt(gameBoardSize);
-                int randomColumnNumber = random.nextInt(gameBoardSize - 1);
-
-                if (randomColumnNumber == 0) {
-                    for (int i = 0; i <= ship[1]; i++) {
-                        if (randomRawNumber == 0) {
-                            for (int j = 0; j < 2; j++) {
-                                if (gameBoard[randomRawNumber + j][randomColumnNumber + i] != water)
-                                    canPlaceShip = false;
-                            }
-                        } else if (randomRawNumber + 1 == gameBoardSize) {
-                            for (int j = -1; j < 1; j++) {
-                                if (gameBoard[randomRawNumber + j][randomColumnNumber + i] != water)
-                                    canPlaceShip = false;
-                            }
-                        } else if (randomRawNumber + 1 < gameBoardSize) {
-                            for (int j = -1; j < 2; j++) {
-                                if (gameBoard[randomRawNumber + j][randomColumnNumber + i] != water)
-                                    canPlaceShip = false;
-                            }
-                        } else {
-                            canPlaceShip = false;
-                        }
-                    }
-                } else if (randomColumnNumber + ship[1] == gameBoardSize) {
-                    for (int i = -1; i <= ship[1]; i++) {
-                        if (randomRawNumber == 0) {
-                            for (int j = 0; j < 2; j++) {
-                                if (gameBoard[randomRawNumber + j][randomColumnNumber + i] != water)
-                                    canPlaceShip = false;
-                            }
-                        } else if (randomRawNumber + 1 == gameBoardSize) {
-                            for (int j = -1; j < 1; j++) {
-                                if (gameBoard[randomRawNumber + j][randomColumnNumber + i] != water)
-                                    canPlaceShip = false;
-                            }
-                        } else if (randomRawNumber + 1 < gameBoardSize) {
-                            for (int j = -1; j < 2; j++) {
-                                if (gameBoard[randomRawNumber + j][randomColumnNumber + i] != water)
-                                    canPlaceShip = false;
-                            }
-                        } else {
-                            canPlaceShip = false;
-                        }
-                    }
-                } else if (randomColumnNumber + ship[1] < gameBoardSize) {
-                    for (int i = -1; i <= ship[1]; i++) {
-                        if (randomRawNumber == 0) {
-                            for (int j = 0; j < 2; j++) {
-                                if (gameBoard[randomRawNumber + j][randomColumnNumber + i] != water)
-                                    canPlaceShip = false;
-                            }
-                        } else if (randomRawNumber + 1 == gameBoardSize) {
-                            for (int j = -1; j < 1; j++) {
-                                if (gameBoard[randomRawNumber + j][randomColumnNumber + i] != water)
-                                    canPlaceShip = false;
-                            }
-                        } else if (randomRawNumber + 1 < gameBoardSize){
-                            for (int j = -1; j < 2; j++) {
-                                if (gameBoard[randomRawNumber + j][randomColumnNumber + i] != water)
-                                    canPlaceShip = false;
-                            }
-                        } else {
-                            canPlaceShip = false;
-                        }
-                    }
-                } else {
-                    canPlaceShip = false;
-                }
-
-                if (canPlaceShip) {
-                    for (int i = 0; i < ship[1]; i++) {
-                        gameBoard[randomRawNumber][randomColumnNumber + i] = (char) ship[0];
-                    }
-                    placedShipNumber++;
-                }
-            }
-            canPlaceShip = true;
-        }
-    }
-
-     */
     public static void placeBoat (char[][] gameBoard, int gameBoardSize, int[] boat, char water) {
         Random random = new Random();
         int placedBoatNumber = 0;
