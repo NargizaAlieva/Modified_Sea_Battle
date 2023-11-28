@@ -8,17 +8,17 @@ public class Main {
         int gameBoardSize = 7;
 
         char water = '#';
-        // Ship name = {char (in integer), length of ship, width of ship}
-        int[] destroyer = new int[] {51, 3, 0}; // ship with 3 squares length
-        int[] submarine = new int[] {50, 2, 1}; // ship with 3 squares length
-        int[] boat = new int[] {49, 1, 1};      // ship with 3 squares length
+        // Ship name = {char (in integer), length of ship, number of ships}
+        int[] destroyer = new int[] {51, 3, 1}; // ship with 3 squares length
+        int[] submarine = new int[] {50, 2, 2}; // ship with 2 squares length
+        int[] boat = new int[] {49, 1, 4};      // ship with 1 squares length
 
         char miss = '0';
         char hit  = 'X';
         char sunk = '*';
 
         while (true) {
-            System.out.print("Modes:\n 1. playOnePlayerMode\n 2. playTwoPlayersMode\n 3. playWithComputerMode\nChoose mode: ");
+            System.out.print("Modes:\n 1. Play one player mode\n 2. Play two players mode\n 3. Play with computer mode\nChoose mode: ");
             int mode = scanner.nextInt();
             clearScreen();
 
@@ -33,7 +33,7 @@ public class Main {
             }
 
             System.out.println("\nDo you want to play again?");
-            System.out.print("Choose 'yes' or 'no': ");
+            System.out.print("Type 'yes' or 'no': ");
             String playAgainAnswer = scanner.nextLine();
             playAgainAnswer = scanner.nextLine();
 
@@ -191,15 +191,15 @@ public class Main {
 
         while (playerIsThereShip && computerIsThereShip) {
             //Computer
-            System.out.println("\nComputer turn\n");
+            System.out.println("Computer turn\n");
             if (loopRepeatNumber != 1) {
                 System.out.println(messageForComputer);
             }
-            showAllGameBoard(computerGameBoard);
-            //showGameBoard(gameBoard, water, destroyer, submarine, boat);
+            //showAllGameBoard(computerGameBoard);
+            showGameBoard(computerGameBoard, water, destroyer, submarine, boat);
 
             System.out.print("Enter the coordinate: ");
-            computerEstimatedCoordinate = chooseComputer(gameBoardSize);
+            computerEstimatedCoordinate = chooseCoordinateComputer(gameBoardSize);
 
             messageForComputer = updateGameBoard(computerGameBoard, gameBoardSize, water, destroyer, submarine, boat, miss, hit, sunk, computerEstimatedCoordinate);
             computerIsThereShip = checkIsThereAnyShip(computerGameBoard, destroyer, submarine, boat, hit, sunk);
@@ -210,8 +210,8 @@ public class Main {
             if (loopRepeatNumber != 1) {
                 System.out.println(messageForPlayer);
             }
-            showAllGameBoard(playerGameBoard);
-            //showGameBoard(gameBoard, water, destroyer, submarine, boat);
+            //showAllGameBoard(playerGameBoard);
+            showGameBoard(playerGameBoard, water, destroyer, submarine, boat);
 
             System.out.print("Enter the coordinate: ");
             playerEstimatedCoordinate = scanner.nextLine();
@@ -248,7 +248,7 @@ public class Main {
             }
         }
     }
-    public static String chooseComputer(int gameBoardSize) {
+    public static String chooseCoordinateComputer(int gameBoardSize) {
         Random random = new Random();
         char[] computerArrayRaw = new char[gameBoardSize];
         char[] computerArrayColumn = new char[gameBoardSize];
@@ -319,15 +319,6 @@ public class Main {
                 } else {
                     System.out.print(column + " ");
                 }
-            }
-            System.out.println();
-        }
-        System.out.println();
-    }
-    public static void showAllGameBoard (char[][] gameBoard) {
-        for (char[] row: gameBoard) {
-            for (char column: row) {
-                System.out.print(column + " ");
             }
             System.out.println();
         }
@@ -465,22 +456,6 @@ public class Main {
             }
         }
         return column;
-    }
-    public static void showMessage(char[][] gameBoard, char water, int[] boat, char miss, char sunk, char hit, String estimatedCoordinate){
-        if (gameBoard[checkCoordinateRaw(estimatedCoordinate)][checkCoordinateColumn(estimatedCoordinate)] == water)
-        {
-            System.out.println("You missed. Try again!");
-        } else if (gameBoard[checkCoordinateRaw(estimatedCoordinate)][checkCoordinateColumn(estimatedCoordinate)] == (char) boat[0]) {
-            System.out.println("You sank the boat. Congratulation!");
-        } else if (gameBoard[checkCoordinateRaw(estimatedCoordinate)][checkCoordinateColumn(estimatedCoordinate)] == hit) {
-            System.out.println("You already hit this ship.");
-        } else if (gameBoard[checkCoordinateRaw(estimatedCoordinate)][checkCoordinateColumn(estimatedCoordinate)] == sunk) {
-            System.out.println("This ship already sunk.");
-        } else if (gameBoard[checkCoordinateRaw(estimatedCoordinate)][checkCoordinateColumn(estimatedCoordinate)] == miss) {
-            System.out.println("You already chose this coordinate.");
-        } else {
-            System.out.println("You hit the ship!");
-        }
     }
     public static char[][] createGameBoard(int gameBoardSize, char water, int[] destroyer, int[] submarine, int[] boat) {
         char[][] gameBoard = new char[gameBoardSize][gameBoardSize];
